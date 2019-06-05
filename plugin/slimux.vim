@@ -206,12 +206,7 @@ function! s:Send(tmux_packet)
     let type = a:tmux_packet["type"]
 
     if type == "code" || type == "cmd"
-
-      if exists('g:slimux_append')
-	      let text = a:tmux_packet["text"] . g:slimux_append
-      else
-	      let text = a:tmux_packet["text"]
-      endif
+      let text = a:tmux_packet["text"]
 
       if type == "code"
         call s:ExecFileTypeFn("SlimuxPre_", [target])
@@ -380,9 +375,9 @@ endfunction
 
 command! SlimuxREPLSendLine call SlimuxSendCode(getline(".") . "\n")
 command! SlimuxREPLSendParagraph call SlimuxSendCode(s:GetParagraph())
-command! SlimuxREPLSendSexp call SlimuxSendCode(s:GetSexp() . "\n")
-command! SlimuxREPLSendTopSexp call SlimuxSendCode(s:GetTopSexp() . "\n")
-command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual() . "\n")
+command! SlimuxREPLSendSexp call SlimuxSendCode(s:GetSexp())
+command! SlimuxREPLSendTopSexp call SlimuxSendCode(s:GetTopSexp())
+command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual())
 command! -range -bar -nargs=0 SlimuxREPLSendLine <line1>,<line2>call s:SlimeSendRange()
 command! -range=% -bar -nargs=* SlimuxREPLSendBuffer call SlimuxSendCode(s:GetBuffer())
 command! SlimuxREPLConfigure call SlimuxConfigureCode()

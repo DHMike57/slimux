@@ -190,9 +190,6 @@ You can use [Python][] and [CoffeeScript][] hooks as examples.
 - `g:slimux_pane_format` customize the formatting of the panes, see the FORMATS section in `man tmux`.  
   The string "`#{pane_id}: `" is always prepended to the format so Slimux can identify the selected pane.
 
-## Added by DHMike57
-
-- 'g:slimux_append = undefined' Use e.g for smlnj which wants ";\n" at the end of each expression.
 
 ## Other Vim Slime plugins
 
