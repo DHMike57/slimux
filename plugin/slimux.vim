@@ -207,7 +207,11 @@ function! s:Send(tmux_packet)
 
     if type == "code" || type == "cmd"
 
-      let text = a:tmux_packet["text"]
+      if exists('g:slimux_append')
+	      let text = a:tmux_packet["text"] . g:slimux_append
+      else
+	      let text = a:tmux_packet["text"]
+      endif
 
       if type == "code"
         call s:ExecFileTypeFn("SlimuxPre_", [target])
@@ -290,6 +294,40 @@ function! s:GetBuffer()
     return selection
 endfunction
 
+function! s:GetTopSexp()
+    let reg_save = getreg('"')
+    let regtype_save = getregtype('"')
+    let cb_save = &clipboard
+    set clipboard&
+    let l:l = line(".")
+    let l:c = col(".")
+
+    " Do the business:
+    silent normal ""yaF
+    let selection = getreg('"')
+
+    call cursor(l:l, l:c)
+    call setreg('"', reg_save, regtype_save)
+    let &clipboard = cb_save
+    return selection
+endfunction
+function! s:GetSexp()
+    let reg_save = getreg('"')
+    let regtype_save = getregtype('"')
+    let cb_save = &clipboard
+    set clipboard&
+    let l:l = line(".")
+    let l:c = col(".")
+
+    " Do the business:
+    silent normal ""yaf
+    let selection = getreg('"')
+
+    call cursor(l:l, l:c)
+    call setreg('"', reg_save, regtype_save)
+    let &clipboard = cb_save
+    return selection
+endfunction
 function! s:GetParagraph()
     let reg_save = getreg('"')
     let regtype_save = getregtype('"')
@@ -342,7 +380,9 @@ endfunction
 
 command! SlimuxREPLSendLine call SlimuxSendCode(getline(".") . "\n")
 command! SlimuxREPLSendParagraph call SlimuxSendCode(s:GetParagraph())
-command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual())
+command! SlimuxREPLSendSexp call SlimuxSendCode(s:GetSexp() . "\n")
+command! SlimuxREPLSendTopSexp call SlimuxSendCode(s:GetTopSexp() . "\n")
+command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual() . "\n")
 command! -range -bar -nargs=0 SlimuxREPLSendLine <line1>,<line2>call s:SlimeSendRange()
 command! -range=% -bar -nargs=* SlimuxREPLSendBuffer call SlimuxSendCode(s:GetBuffer())
 command! SlimuxREPLConfigure call SlimuxConfigureCode()
