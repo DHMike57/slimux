@@ -46,9 +46,7 @@ function! s:ConfSetPane(tmux_packet, target_pane)
   let a:tmux_packet["target_pane"] = a:target_pane
   " Save last selected pane
   let s:last_selected_pane = a:target_pane
-
   let type = a:tmux_packet["type"]
-
   if type == "global"
       if !exists("b:code_packet")
           let b:code_packet = { "target_pane": "", "type": "code" }
@@ -201,7 +199,6 @@ function! s:Send(tmux_packet)
         let s:retry_send = a:tmux_packet
         return s:SelectPane(a:tmux_packet)
     endif
-
     let target = a:tmux_packet["target_pane"]
     let type = a:tmux_packet["type"]
 
@@ -288,7 +285,6 @@ function! s:GetBuffer()
     call winrestview(l:winview)
     return selection
 endfunction
-
 function! s:GetTopSexp()
     let reg_save = getreg('"')
     let regtype_save = getregtype('"')
@@ -296,7 +292,6 @@ function! s:GetTopSexp()
     set clipboard&
     let l:l = line(".")
     let l:c = col(".")
-
     " Do the business:
     silent normal ""yaF
     let selection = getreg('"')
@@ -377,7 +372,7 @@ command! SlimuxREPLSendLine call SlimuxSendCode(getline(".") . "\n")
 command! SlimuxREPLSendParagraph call SlimuxSendCode(s:GetParagraph())
 command! SlimuxREPLSendSexp call SlimuxSendCode(s:GetSexp())
 command! SlimuxREPLSendTopSexp call SlimuxSendCode(s:GetTopSexp())
-command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual())
+command! -range=% -bar -nargs=* SlimuxREPLSendSelection call SlimuxSendCode(s:GetVisual() . "\n")
 command! -range -bar -nargs=0 SlimuxREPLSendLine <line1>,<line2>call s:SlimeSendRange()
 command! -range=% -bar -nargs=* SlimuxREPLSendBuffer call SlimuxSendCode(s:GetBuffer())
 command! SlimuxREPLConfigure call SlimuxConfigureCode()

@@ -190,7 +190,6 @@ You can use [Python][] and [CoffeeScript][] hooks as examples.
 - `g:slimux_pane_format` customize the formatting of the panes, see the FORMATS section in `man tmux`.  
   The string "`#{pane_id}: `" is always prepended to the format so Slimux can identify the selected pane.
 
-
 ## Other Vim Slime plugins
 
 Before I created this plugin I tried several others, but non of them satisfied me. They where too

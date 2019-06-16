@@ -129,12 +129,37 @@ function! Slimux_racket_break()
     call SlimuxSendKeys('C-c enter')
 endfunction
 
+:function! SlimuxRestart()
+	call SlimuxSendKeys('C-c enter')
+	call SlimuxSendCode('(quit)'. "\n")
+	:sleep 1
+	call SlimuxSendCode('racket' . "\n")
+:endfunction
+
+function! s:SexpShowPict()
+    let reg_save = getreg('"')
+    let regtype_save = getregtype('"')
+    let cb_save = &clipboard
+    set clipboard&
+    let l:l = line(".")
+    let l:c = col(".")
+    " Do the business:
+    silent normal ""yaf
+    let selection = "(show-pict " . getreg('"') . ")"
+
+    call cursor(l:l, l:c)
+    call setreg('"', reg_save, regtype_save)
+    let &clipboard = cb_save
+    return selection
+endfunction
+
 " Change functions to commands {{{1
 command! SlimuxRacketEvalDefun call Slimux_racket_eval_defun()
 command! SlimuxRacketEvalBuffer call Slimux_racket_eval_buffer()
 command! SlimuxRacketTop call Slimux_racket_top()
 command! -nargs=? SlimuxRacketDoc call Slimux_racket_doc(<f-args>)
 command! SlimuxRacketBreak call Slimux_racket_break()
+command! SlimuxREPLSexpShowPict call SlimuxSendCode(s:SexpShowPict())
 
 " Set keybindings {{{1
 if g:slimux_racket_keybindings == 1
