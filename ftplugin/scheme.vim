@@ -43,12 +43,6 @@ if !exists('g:slimux_scheme_leader')
     endif
 endif
 
-:function SLimuxRestart()
-	:SlimuxShellRun \<c-c>
-	:SlimuxShellRun (quit)
-	:sleep 1
-	:SlimuxShellRun csi
-:endfunction
 " slimux_scheme keybinding set (0 = no keybindings)
 if !exists('g:slimux_scheme_keybindings')
     let g:slimux_scheme_keybindings = 0

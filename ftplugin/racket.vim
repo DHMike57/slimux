@@ -129,13 +129,6 @@ function! Slimux_racket_break()
     call SlimuxSendKeys('C-c enter')
 endfunction
 
-:function! SlimuxRestart()
-	call SlimuxSendKeys('C-c enter')
-	call SlimuxSendCode('(quit)'. "\n")
-	:sleep 1
-	call SlimuxSendCode('racket' . "\n")
-:endfunction
-
 function! s:SexpShowPict()
     let reg_save = getreg('"')
     let regtype_save = getregtype('"')

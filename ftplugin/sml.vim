@@ -16,11 +16,3 @@ function! SlimuxEscape_sml(text)
     return str_ret
 endfunction
 
-:function SlimuxRestart()
-	call SlimuxSendCode("\<c-c>")
-	"	:SlimuxShellRun \<c-c>
-	call SlimuxSendCode('OS.Process.exit(OS.Process.success);' . "\n")
-	":SlimuxShellRun OS.Process.exit(OS.Process.success);<CR>
-	:sleep 1
-	call SlimuxSendCode("rlwrap sml\n")
-:endfunction
