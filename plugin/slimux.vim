@@ -221,8 +221,17 @@ function! s:Send(tmux_packet)
     elseif type == 'keys'
 
       let keys = a:tmux_packet["keys"]
-      call system(g:slimux_tmux_path . ' send-keys -t " . target . " " . keys)
-
+      call system(g:slimux_tmux_path . ' send-keys -t ' . target . " " . keys)
+    elseif type == 'read'
+      let l:repl_contents= system(g:slimux_tmux_path . ' capture-pane -pt ' . target )
+      let l:contents=split(l:repl_contents,"\n")
+      let l:contents=filter(l:contents,'v:val != ""')
+      if exists("g:repl_prompt")
+         let l:rexp='v:val !~ "^' . g:repl_prompt . '.*"' 
+         let l:contents=filter(l:contents,'v:val != ' . '"'.g:repl_prompt.'"')
+         let l:contents=filter(l:contents,l:rexp)
+      endif
+        let s:get_packet["contents"]=l:contents
     endif
 
 endfunction
@@ -428,7 +437,15 @@ command! SlimuxSendKeysPrompt    call SlimuxSendKeys(input('KEYS>', s:previous_k
 command! SlimuxSendKeysLast      call SlimuxSendKeys(s:previous_keys != "" ? s:previous_keys : input('KEYS>'))
 command! SlimuxSendKeysConfigure call s:SelectPane(s:keys_packet)
 
-
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"    Read from repl interface
+"""""""""""""""""""""""""""""""""""""""""
+let s:get_packet = { "target_pane": "","type": "read","contents": ""}
+function! SlimuxGetRepl()
+	call s:Send(s:get_packet)
+	return s:get_packet["contents"]
+endfunction
+	
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Global interface (i.e. for repl, shell, and keys )
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
