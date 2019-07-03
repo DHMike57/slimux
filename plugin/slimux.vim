@@ -231,11 +231,33 @@ function! s:Send(tmux_packet)
          let l:contents=filter(l:contents,'v:val != ' . '"'.g:repl_prompt.'"')
          let l:contents=filter(l:contents,l:rexp)
       endif
+        let l:contents= s:ExecFileTypeFn("SlimuxFilter_", [l:contents])
         let s:get_packet["contents"]=l:contents
     endif
 
 endfunction
 
+" display text in preview like buffer
+"  used for repl text.  Should be filter in ftplugin hook
+"  text is an array of lines
+function! s:preview_window(text)
+	aboveleft new
+	if !exists("g:slimux_buffer_filetype")
+	    let g:slimux_buffer_filetype = 'sh'
+	endif
+	let &filetype=g:slimux_buffer_filetype
+	call append(1,a:text)
+	call cursor(line("$"),1)
+	call append(line("."),"**** <CR> or q to close")
+        execute min([ 10, line('$') ]) . 'wincmd _'
+	" bufhidden=wipe deletes the buffer when it is hidden
+	setlocal bufhidden=wipe buftype=nofile
+	setlocal nobuflisted nomodifiable noswapfile nowrap
+	setlocal cursorline nocursorcolumn nonumber
+	" Hide buffer on q, and C-c
+	nnoremap <buffer> <silent> q :hide<CR>
+	nnoremap <buffer> <silent> <CR> :hide<CR>
+endfunction
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Helpers
@@ -443,6 +465,10 @@ command! SlimuxSendKeysConfigure call s:SelectPane(s:keys_packet)
 let s:get_packet = { "target_pane": "","type": "read","contents": ""}
 function! SlimuxGetRepl()
 	call s:Send(s:get_packet)
+	if len(s:get_packet["contents"])==0
+		return
+	endif
+	call s:preview_window(s:get_packet["contents"])
 	return s:get_packet["contents"]
 endfunction
 	
