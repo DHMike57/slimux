@@ -39,6 +39,7 @@ if exists("g:slimux_racket_loaded")
     finish
 endif
 let g:slimux_racket_loaded= 1
+let g:slimux_buffer_filetype="racket"
 
 " set Custom <Leader> for the slimux_racket plugin
 if !exists('g:slimux_racket_leader')
@@ -127,6 +128,13 @@ endfunction
 " Send User break
 function! Slimux_racket_break()
     call SlimuxSendKeys('C-c enter')
+endfunction
+
+function! SlimuxFilter_racket(text)
+	let str_ret=filter(a:text,'v:val !~ "^Welcome to Racket"')
+  " get rid of the prompt
+	let str_ret=map(a:text,{key,val->substitute(val,"> *","","")})
+	return str_ret
 endfunction
 
 function! s:SexpShowPict()
