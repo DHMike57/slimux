@@ -227,13 +227,8 @@ function! s:Send(tmux_packet)
       let l:repl_contents= system(g:slimux_tmux_path . ' capture-pane -pt ' . target )
       let l:contents=split(l:repl_contents,"\n")
       let l:contents=filter(l:contents,'v:val != ""')
-      if exists("g:repl_prompt")
-         let l:rexp='v:val !~ "^' . g:repl_prompt . '.*"' 
-         let l:contents=filter(l:contents,'v:val != ' . '"'.g:repl_prompt.'"')
-         let l:contents=filter(l:contents,l:rexp)
-      endif
-        let l:contents= s:ExecFileTypeFn("SlimuxFilter_", [l:contents])
-        let s:get_packet["contents"]=l:contents
+      let l:contents= s:ExecFileTypeFn("SlimuxFilter_", [l:contents])
+      let s:get_packet["contents"]=l:contents
     endif
 
 endfunction
