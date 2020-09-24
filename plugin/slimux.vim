@@ -54,6 +54,7 @@ function! s:ConfSetPane(tmux_packet, target_pane)
       let b:code_packet["target_pane"] = a:tmux_packet["target_pane"]
       let s:cmd_packet["target_pane"] = a:tmux_packet["target_pane"]
       let s:keys_packet["target_pane"] = a:tmux_packet["target_pane"]
+      let s:get_packet["target_pane"] = a:tmux_packet["target_pane"]
       return
   endif
 
@@ -219,9 +220,9 @@ function! s:Send(tmux_packet)
       endif
 
     elseif type == 'keys'
-
       let keys = a:tmux_packet["keys"]
       call system(g:slimux_tmux_path . ' send-keys -t ' . target . " " . keys)
+
     elseif type == 'read'
       let l:repl_contents= system(g:slimux_tmux_path . ' capture-pane -pt ' . target )
       let l:contents=split(l:repl_contents,"\n")
